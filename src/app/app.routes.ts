@@ -10,7 +10,7 @@ export const routes: Routes = [
   {
     path: '**',
     loadComponent: () =>
-      import('./features/alerts/not-found-screen/not-found-screen.component').then(
+      import('./shared/components/not-found-screen/not-found-screen.component').then(
         (m) => m.NotFoundScreenComponent,
       ),
   },
