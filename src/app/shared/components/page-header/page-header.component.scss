@@ -1,0 +1,46 @@
+:host { display: block; }
+
+.page-header {
+  color: #fff;
+  background: var(--color-brand);
+
+  &-vector {
+    background: url('/header-vector.png') no-repeat 100% 100% / 100% 100%;
+  }
+
+  &-title {
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  &-nav a {
+    color: #fff;
+    font-weight: 500;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: opacity 150ms ease;
+
+    &:hover { opacity: 0.85; }
+
+    .nav-icon {
+      width: 1.8rem;
+      height: 1.8rem;
+      font-size: 1.8rem;
+    }
+  }
+
+  &-subtitle {
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 2rem;
+    max-width: 65.9rem;
+    margin: 0;
+    text-box: trim-start cap;
+  }
+}

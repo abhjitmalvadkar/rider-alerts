@@ -1,0 +1,13 @@
+<div class="state state-danger flex flex-col items-center gap-[1.2rem] p-[4rem] md:p-[4.8rem] text-center" role="alert">
+  <mat-icon svgIcon="triangle-alert" class="state-icon" aria-hidden="true"/>
+  <p class="state-msg">{{ message() }}</p>
+  <div
+    role="button"
+    tabindex="0"
+    class="state-btn state-btn-brand px-[2rem] py-[1rem] mt-[0.4rem]"
+    (click)="onRetry()"
+    (keydown.enter)="onRetry()"
+    (keydown.space)="onRetry()">
+    Retry
+  </div>
+</div>

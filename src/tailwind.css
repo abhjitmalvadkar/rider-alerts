@@ -1,0 +1,23 @@
+@import "tailwindcss";
+@source "./app/**/*.{html,ts}";
+
+/* Expose our SCSS design tokens to Tailwind utilities (bg-brand, text-accent, etc.) */
+@theme {
+  --color-brand:     #003DA5;
+  --color-bg:        #E3ECFF;
+  --color-surface:   #FFFFFF;
+  --color-accent:    #90118C;
+  --color-slatetext: #465467;
+  --color-pill:      #E3ECFF;
+  --color-tabborder: #C8CCD2;
+  --color-danger:    #EF4444;
+
+  /* ***** MOBILE VIEW ***** */
+  --breakpoint-sm: 600px;   /* ***** TAB VIEW ***** */
+  --breakpoint-md: 960px;   /* ***** DESKTOP VIEW ***** */
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1920px;
+}
+
+/* xs is a max-width variant (mobile-only) — tummy-fuel convention */
+@custom-variant xs (@media (max-width: 599.98px));

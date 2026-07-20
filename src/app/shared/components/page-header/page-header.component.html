@@ -1,0 +1,24 @@
+<header class="page-header relative overflow-hidden lg:max-h-[30rem]">
+  <div class="page-header-vector hidden md:block absolute top-0 right-0 h-full w-[40%] pointer-events-none"></div>
+
+  <div class="container flex flex-col gap-[1.6rem] md:gap-[2.4rem] p-[1.6rem] sm:p-[2.4rem] md:p-[4rem] lg:p-[8rem] xl:p-[10rem] relative z-10">
+    @if (navLink()) {
+      <div class="page-header-nav">
+        <a [routerLink]="navLink()">
+          <mat-icon svgIcon="chevron-left" class="nav-icon" aria-hidden="true"/>
+          {{ navLabel() }}
+        </a>
+      </div>
+    }
+    <div class="flex flex-col gap-[2.4rem] md:gap-[3.2rem] lg:gap-[4.4rem]">
+      <div class="page-header-title-row">
+        <h1 class="page-header-title xs:text-[2.8rem] xs:leading-[3.2rem] text-[3.2rem] leading-[3.6rem] md:text-[4.8rem] md:leading-[5.2rem] lg:text-[6.4rem] lg:leading-[6.4rem] xl:text-[7.2rem] xl:leading-[7.6rem]">{{ title() }}</h1>
+      </div>
+      @if (subtitle()) {
+        <div class="page-header-subtitle-row">
+          <p class="page-header-subtitle">{{ subtitle() }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</header>

@@ -1,0 +1,29 @@
+<nav class="flex items-center justify-end gap-[2.4rem] flex-wrap py-[1.2rem]" aria-label="Pagination">
+  <span class="pager-status">{{ rangeStart() }} – {{ rangeEnd() }} of {{ total() }}</span>
+  <div class="flex items-center gap-[2.4rem]">
+    <div
+      class="pager-arrow"
+      role="button"
+      [attr.tabindex]="canPrev() ? 0 : -1"
+      [attr.aria-disabled]="!canPrev()"
+      [class.is-disabled]="!canPrev()"
+      (click)="prev()"
+      (keydown.enter)="prev()"
+      (keydown.space)="prev()"
+      aria-label="Go to previous page">
+      <mat-icon svgIcon="chevron-left" aria-hidden="true"/>
+    </div>
+    <div
+      class="pager-arrow"
+      role="button"
+      [attr.tabindex]="canNext() ? 0 : -1"
+      [attr.aria-disabled]="!canNext()"
+      [class.is-disabled]="!canNext()"
+      (click)="next()"
+      (keydown.enter)="next()"
+      (keydown.space)="next()"
+      aria-label="Go to next page">
+      <mat-icon svgIcon="chevron-right" aria-hidden="true"/>
+    </div>
+  </div>
+</nav>

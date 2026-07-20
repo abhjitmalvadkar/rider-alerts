@@ -1,0 +1,61 @@
+<div class="page-container container p-[1.6rem] sm:p-[2.4rem] md:p-[4rem] lg:p-[8rem] lg:px-[32rem] flex flex-col gap-[2.4rem]">
+  @if (!alert()) {
+    <div class="not-found max-w-md mx-auto p-[4rem]">
+      <h2 class="text-[2.4rem]">Alert not found</h2>
+      <p>We couldn't find an alert with that id.</p>
+      <a routerLink="/alerts" class="btn-pill-brand inline-block mt-[2rem] px-[2rem] py-[1rem]">Back to Rider Alerts</a>
+    </div>
+  } @else {
+    @let a = alert()!;
+    <div class="flex flex-col gap-[2.4rem]">
+      <div class="flex flex-col gap-[4.8rem] xs:text-center">
+        <span class="details-badge self-start px-[1.2rem] py-[0.6rem]">{{ a.typeName }}</span>
+        <h2 #titleEl class="details-title text-[3.2rem] leading-[3.6rem] md:text-[4.4rem] md:leading-[4.8rem] lg:text-[5.6rem] lg:leading-[6.16rem]" tabindex="-1">{{ a.title }}</h2>
+      </div>
+
+      <div class="details-meta flex flex-wrap items-center gap-x-[1.6rem] xs:justify-center">
+        @for (item of metaItems(); track $index) {
+          @if (item.separator) {
+            <span class="details-meta-sep">{{ item.text }}</span>
+          } @else {
+            <span
+              class="details-meta-item inline-flex items-center gap-[0.8rem]"
+              [class.details-meta-item-ongoing]="item.ongoing">
+              @if (item.icon) {
+                <mat-icon [svgIcon]="item.icon" class="details-inline-icon" aria-hidden="true"/>
+              }
+              {{ item.iso ? (item.iso | date: item.format) : item.text }}
+            </span>
+          }
+        }
+      </div>
+
+      <div class="flex flex-col gap-[3.2rem] mt-[2.4rem]">
+        <div class="flex flex-col gap-[1.2rem]">
+          <h3 class="details-section-title">Affected Routes</h3>
+          @if (a.routeNames.length) {
+            <ul class="details-routes pl-[2.4rem] flex flex-col gap-[0.4rem]">
+              @for (r of a.routeNames; track r) {
+                <li>{{ r }}</li>
+              }
+            </ul>
+          } @else {
+            <p class="details-routes-empty">System-wide</p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-[1.6rem]">
+          <h3 class="details-section-title">Description</h3>
+          <div class="details-body" [innerHTML]="a.descriptionHtml | safeHtml"></div>
+        </div>
+
+        @if (a.effect) {
+          <div class="flex flex-col gap-[1.2rem]">
+            <h3 class="details-section-title">Effect</h3>
+            <p class="details-effect">{{ a.effect }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

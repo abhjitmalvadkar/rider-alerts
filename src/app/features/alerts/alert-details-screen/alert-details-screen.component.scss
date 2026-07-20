@@ -1,0 +1,76 @@
+:host { display: block; }
+
+.details {
+  &-badge {
+    background: var(--color-surface);
+    color: var(--color-brand);
+    font-weight: 500;
+    font-size: 1.4rem;
+    line-height: 2.1rem;
+    text-align: center;
+    border-radius: 0.6rem;
+  }
+
+  &-title {
+    color: var(--color-brand);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+    outline: none;
+  }
+
+  &-body,
+  &-meta,
+  &-meta-item,
+  &-routes,
+  &-routes-empty,
+  &-effect {
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+    color: var(--color-slatetext);
+  }
+
+  &-meta-sep { color: var(--color-slatetext); font-weight: 600; }
+  &-meta-item-ongoing { color: var(--color-brand); font-weight: 600; }
+
+  &-inline-icon {
+    width: 1.8rem;
+    height: 1.8rem;
+    font-size: 1.8rem;
+  }
+
+  &-section-title {
+    color: var(--color-brand);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &-routes { list-style: disc; }
+  &-routes li { padding: 0.2rem 0; }
+  &-routes-empty { font-style: italic; }
+
+  &-body {
+    :is(h1, h2, h3, h4) {
+      font-weight: 600;
+      font-size: 2rem;
+      line-height: 2.8rem;
+    }
+    h4 { margin: 0; color: var(--color-brand); }
+    p { margin: 0; }
+    ul { list-style: disc; padding-left: 2.2rem; margin: 0; }
+    li { padding: 0.2rem 0; }
+    strong { color: inherit; font-weight: 600; }
+    * + :is(h1, h2, h3, h4) { margin-top: 3.2rem; }
+  }
+}
+
+.not-found {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+
+  h2 { color: var(--color-brand); margin-bottom: 0.8rem; }
+}

@@ -1,0 +1,35 @@
+.state {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+
+  &-icon {
+    color: var(--color-slatetext);
+    width: 4.8rem;
+    height: 4.8rem;
+    font-size: 4.8rem;
+  }
+
+  &-msg {
+    color: var(--color-slatetext);
+    margin: 0;
+  }
+
+  &-btn {
+    border: none;
+    border-radius: 99.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 150ms ease;
+    min-height: 4.4rem;
+    color: #fff;
+
+    &-accent { background: var(--color-accent); }
+    &-accent:hover { background: var(--color-accent-dark); }
+
+    &-brand { background: var(--color-brand); }
+    &-brand:hover { background: var(--color-brand-dark); }
+  }
+}
+
+.state-danger .state-icon { color: var(--color-danger); }

@@ -1,0 +1,15 @@
+<div class="state flex flex-col items-center gap-[1.2rem] p-[4rem] md:p-[4.8rem] text-center" role="status">
+  <mat-icon svgIcon="face-neutral" class="state-icon" aria-hidden="true"/>
+  <p class="state-msg">{{ message() }}</p>
+  @if (actionLabel()) {
+    <div
+      role="button"
+      tabindex="0"
+      class="state-btn state-btn-accent px-[2rem] py-[1rem] mt-[0.4rem]"
+      (click)="onAction()"
+      (keydown.enter)="onAction()"
+      (keydown.space)="onAction()">
+      {{ actionLabel() }}
+    </div>
+  }
+</div>

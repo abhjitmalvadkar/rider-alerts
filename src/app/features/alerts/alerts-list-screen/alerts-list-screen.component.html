@@ -1,0 +1,23 @@
+<div class="page-container container p-[1.6rem] md:p-[3.2rem] lg:p-[6rem] flex flex-col gap-[2.4rem] md:gap-[3.6rem] lg:gap-[4.8rem]">
+  <section class="flex flex-col items-center gap-[1.6rem]">
+    <app-alert-filter-bar
+      [options]="options()"
+      [active]="filter()"
+      (filterChange)="onFilter($event)" />
+  </section>
+
+  <app-alert-list
+    [alerts]="items()"
+    [status]="status()"
+    [page]="page()"
+    [totalPages]="totalPages()"
+    [count]="total()"
+    (open)="onOpen($event)"
+    (pageChange)="onPage($event)"
+    (retry)="retry()"
+    (showAll)="showAll()" />
+
+  <p class="sr-only" aria-live="polite">
+    {{ total() }} alerts, page {{ page() }} of {{ totalPages() }}
+  </p>
+</div>

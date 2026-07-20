@@ -1,0 +1,53 @@
+<div class="flex flex-col items-center gap-[2.4rem]">
+  <span class="filter-bar-label">Filter by Alert Type</span>
+  <div class="filter-row group flex items-center gap-[1.2rem]">
+    @if (showNav()) {
+      <div
+        class="filter-nav filter-nav-hover"
+        role="button"
+        [attr.tabindex]="canPrev() ? 0 : -1"
+        [attr.aria-disabled]="!canPrev()"
+        [class.is-disabled]="!canPrev()"
+        (click)="prev()"
+        (keydown.enter)="prev()"
+        (keydown.space)="prev()"
+        aria-label="Previous">
+        <mat-icon svgIcon="chevron-left" aria-hidden="true"/>
+      </div>
+    }
+    <div
+      class="filter-bar flex"
+      role="group"
+      aria-label="Filter alerts by type">
+      @for (opt of visibleOptions(); track opt.value) {
+        <div
+          #tab
+          role="button"
+          tabindex="0"
+          class="filter-bar-pill px-[1.6rem] md:px-[2rem] shrink-0"
+          [class.is-active]="isActive(opt.value)"
+          [attr.aria-pressed]="isActive(opt.value)"
+          (click)="select(opt.value)"
+          (keydown)="onKeydown($event, $index)"
+          (keydown.enter)="select(opt.value)"
+          (keydown.space)="select(opt.value)">
+          {{ opt.label }}
+        </div>
+      }
+    </div>
+    @if (showNav()) {
+      <div
+        class="filter-nav filter-nav-hover"
+        role="button"
+        [attr.tabindex]="canNext() ? 0 : -1"
+        [attr.aria-disabled]="!canNext()"
+        [class.is-disabled]="!canNext()"
+        (click)="next()"
+        (keydown.enter)="next()"
+        (keydown.space)="next()"
+        aria-label="Next">
+        <mat-icon svgIcon="chevron-right" aria-hidden="true"/>
+      </div>
+    }
+  </div>
+</div>

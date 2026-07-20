@@ -1,0 +1,27 @@
+<div aria-label="Rider alerts" class="flex flex-col gap-[1.6rem]">
+  @switch (status()) {
+    @case ('error') {
+      <app-error-state (retry)="retry.emit()" />
+    }
+    @default {
+      @if (count() === 0) {
+        <app-empty-state
+          message="No alerts match this filter."
+          actionLabel="Show all alerts"
+          (action)="showAll.emit()" />
+      } @else {
+        <div class="flex flex-col gap-[1.6rem]">
+          @for (a of alerts(); track a.id) {
+            <app-alert-card [alert]="a" (open)="open.emit($event)" />
+          }
+        </div>
+
+        <app-alert-pagination
+          [page]="page()"
+          [totalPages]="totalPages()"
+          [total]="count()"
+          (pageChange)="pageChange.emit($event)" />
+      }
+    }
+  }
+</div>

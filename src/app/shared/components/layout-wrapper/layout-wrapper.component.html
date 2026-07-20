@@ -1,0 +1,9 @@
+@if (title()) {
+  <app-page-header
+    [title]="title()"
+    [subtitle]="subtitle()"
+    [navLink]="navLink()"
+    [navLabel]="navLabel()" />
+}
+<router-outlet />
+<app-global-loader />

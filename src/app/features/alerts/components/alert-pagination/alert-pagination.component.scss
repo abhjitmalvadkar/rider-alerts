@@ -1,0 +1,34 @@
+:host { display: block; }
+
+.pager {
+  &-status {
+    color: var(--color-slatetext);
+    font-weight: 500;
+    font-size: 1.4rem;
+    line-height: 2.1rem;
+  }
+
+  &-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-slatetext);
+    cursor: pointer;
+    transition: color 150ms ease, opacity 150ms ease;
+
+    mat-icon {
+      width: 2rem;
+      height: 2rem;
+      font-size: 2rem;
+    }
+
+    &:hover:not(.is-disabled) {
+      color: var(--color-brand);
+    }
+
+    &.is-disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+  }
+}
