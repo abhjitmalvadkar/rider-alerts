@@ -176,11 +176,3 @@ Root `app.routes.ts` lazy-loads `/alerts` via `loadChildren`. The feature route 
 - **Design tokens** — colors, radii, shadows, spacing all in CSS custom properties so a rebrand is a token change.
 - **SVG icon registry** — six icons registered once via `MatIconRegistry` + `DomSanitizer`; components consume via `<mat-icon svgIcon="chevron-right"/>`.
 
----
-
-## Deviations from the starter template
-
-- **`app-` selector prefix, no `ba-`.** All Blue-Agate starter shared components (icon, dialog, buttons, guards, interceptors, auth) were removed — only build config, Tailwind wiring, and environments were kept.
-- **Public folder instead of `src/assets/`.** Uses Angular 17+ convention — files in `public/` are served at the root URL.
-- **No test files.** Specs were removed per requirement — the codebase ships production code only.
-- **No inline comments.** All comments stripped from `.ts` / `.html` / `.scss` except `tailwind.css` (which has meaningful `@theme` breakpoint labels).
