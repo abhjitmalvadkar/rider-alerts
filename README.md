@@ -25,15 +25,21 @@ npm run build          # production build → dist/rider-alerts
 
 ## Screenshots
 
-Placeholders — add PNGs into `docs/screens/` before submission.
+### List page
 
-| List page (desktop) | Details page (desktop) |
+| Desktop (1440 × 900) | Mobile (390 × 844) |
 |---|---|
-| `docs/screens/list-desktop.png` | `docs/screens/details-desktop.png` |
+| ![list-desktop](docs/screens/list-desktop.png) | ![list-mobile](docs/screens/list-mobile.png) |
 
-| List (tablet) | Details (mobile) |
-|---|---|
-| `docs/screens/list-tablet.png` | `docs/screens/details-mobile.png` |
+### Details page
+
+| Simple alert (desktop) | Rich alert with sub-sections (desktop) | Rich alert (mobile) |
+|---|---|---|
+| ![details-desktop](docs/screens/details-desktop.png) | ![details-desktop-rich](docs/screens/details-desktop-rich.png) | ![details-mobile](docs/screens/details-mobile.png) |
+
+### Empty state (filter with no matches)
+
+![empty](docs/screens/empty.png)
 
 ---
 
