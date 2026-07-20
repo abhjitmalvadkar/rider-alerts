@@ -1,133 +1,196 @@
 # Rider Alerts
 
-A two-page transit-alerts feature built in Angular 21 for the Exemplifi coding test.
+A two-screen transit-alerts feature built with **Angular 21** for the Exemplifi coding test.
 
-* `/alerts` — list of rider alerts with type-filter tabs and 5-per-page client-side pagination
-* `/alerts/:id` — full details for a single alert with sanitized rich-text description
+- `/alerts` — list of rider alerts with type filter and client-side pagination
+- `/alerts/:id` — full details for a single alert with sanitized rich-text description
+
+Repository: https://github.com/abhjitmalvadkar/rider-alerts
+
+---
 
 ## Setup & run
 
-Prerequisites: **Node 20.19+ or 22.12+** and **npm 10+**.
+Prerequisites: **Node 20.19+ or 22.12+**, **npm 10+**.
 
 ```bash
 npm install
-npm start          # http://localhost:4200 (dev server, live reload)
-npm test           # Vitest — one-off run
-npm run build      # production build → dist/rider-alerts
+npm start              # → http://localhost:4200
+npm run build          # production build → dist/rider-alerts
 ```
+
+`npm start` runs `concurrently -k -n TW,NG` — Tailwind pre-compile in watch mode alongside `ng serve`.
+
+---
 
 ## Screenshots
 
-*(Placeholders — add PNGs into `docs/screens/` and reference them here before submission.)*
+Placeholders — add PNGs into `docs/screens/` before submission.
 
-| List (desktop) | List (mobile) | Details | Empty state |
-|---|---|---|---|
-| ![list](docs/screens/list-desktop.png) | ![list-mobile](docs/screens/list-mobile.png) | ![details](docs/screens/details.png) | ![empty](docs/screens/empty.png) |
+| List page (desktop) | Details page (desktop) |
+|---|---|
+| `docs/screens/list-desktop.png` | `docs/screens/details-desktop.png` |
 
-## Architecture & rationale
+| List (tablet) | Details (mobile) |
+|---|---|
+| `docs/screens/list-tablet.png` | `docs/screens/details-mobile.png` |
 
-**Stack.** Angular 21 · standalone components · signals · new control flow (`@if` / `@for` / `@switch`) · OnPush everywhere · TypeScript strict · SCSS + Tailwind v4 · Vitest.
+---
 
-**State — NgRx.** A single feature-level slice (`src/app/features/alerts/store/`) with actions, reducer, selectors, and effects. Consumed inside components via `store.selectSignal(...)`, so the pages stay signals-first while the store handles all side-effects. NgRx was chosen deliberately to show fluency with the pattern — it also demonstrates the "signals + RxJS bonus": the store is Rx internally, the components see only signals.
+## Stack
 
-**HTTP — direct `HttpClient`.** The `AlertService` calls `HttpClient` directly rather than routing through an interceptor pipeline. The data source is two static JSON files in `src/assets/`, which need none of the auth / loading / error interceptor behaviour a real API would (see *Deviations* below). The service caches the alerts list with `shareReplay({ bufferSize: 1, refCount: false })` so `getAlertById(id)` doesn't re-fetch.
+- Angular 21 · standalone components · signals · `@if` / `@for` / `@switch` · OnPush everywhere
+- NgRx 21 (`Store`, `Effects`) for state
+- Angular Material `MatIcon` (SVG registry) + `MatProgressSpinner`
+- Tailwind v4 pre-compiled via `@tailwindcss/cli` (Angular's esbuild builder doesn't process `postcss.config.js`)
+- SCSS with CSS custom properties for design tokens
+- `62.5%` root font-size trick — **1rem = 10px**
 
-**Routing.** Lazy-loaded feature module. The alerts feature registers its own state and effects at the route boundary via `provideState` / `provideEffects`, so both the slice and its effects load only when the user enters `/alerts`. `withComponentInputBinding()` binds the `:id` route param straight to a signal `input()` on the details page.
+---
 
-**URL as source of truth.** Filter and page are synced to query params: `/alerts?type=<id|all>&page=<n>`. The list page reads the params on init (and reactively via `toSignal(queryParamMap)`), dispatches `setFilter` / `setPage`, and every user interaction navigates to update the params. Refresh, deep-link, and browser-back all Just Work.
+## Architecture
 
-**Component split.** `alerts-list-page` is the smart container. It composes four presentational sub-components (all standalone, OnPush, signal inputs/outputs):
-
-* `alert-filter-bar` — pill tabs with `aria-pressed` and arrow-key nav
-* `alert-card` — clickable card (`<button>`), colored data-driven badge + neutral date pill
-* `alert-pagination` — Previous / current-of-total / Next with correct disabled states
-* `list-states/{skeleton-list, empty-state, error-state}` — all four UI states (loading skeleton, success, empty, error+retry)
-
-**Rendering the HTML description.** The list card strips HTML to a short plain-text summary (`StripHtmlPipe`). The details page sanitizes and renders the full HTML (`SafeHtmlPipe`, backed by `DomSanitizer.bypassSecurityTrustHtml`).
-
-**Focus management.** Details page moves focus to the `<h2>` title (`tabindex="-1"`) once the alert resolves. Cards are `<button>`s so they participate in the natural tab order. Filter tabs support arrow-key movement.
-
-## Deviations from the assignment / starter
-
-* **Direct `HttpClient`** instead of the starter's `BaUtilityService.callAPI` convention — static mock JSON in `assets/` doesn't need auth tokens or loader queue, and the layer would just be noise.
-* **`app-` selector prefix, no `ba-`.** The starter's `ba-` shared components (icon, dialog, buttons, etc.) were stripped entirely; the alerts feature is self-contained under `app-`.
-* **Colored type badge** in both the list card and the details page. The Figma showed a neutral pill — colored surfaces the `alertTypeColor` / `alertTypeTextColor` shipped in the data.
-* **Filter is driven by `Alerts-Type.json`** and matches `alertTypeId`. The Figma mock used effect-based labels against a richer real dataset; the assignment says filter by type, so we follow the data.
-* **Stale pagination metadata ignored.** The mock file claims `totalCount: 18 / totalPages: 4` but ships 5 items — pagination is computed client-side from the actual `items.length` and scales automatically when the dataset grows.
-* **Chrome colors sampled from the Figma** and stored as CSS custom properties in `src/styles.scss` (see `--color-brand`, `--color-accent`, etc.). Badge colors stay inline styles from the data.
-* **Starter cleanup.** Everything unrelated to the alerts feature was deleted: authentication, products, profile, samples, layouts, guards, HTTP interceptors, and all `ba-*` shared code. Only build config, environments, style-token infra, PostCSS/Tailwind wiring, and Vitest setup were kept.
-
-## Project structure
+### Folder structure (tummy-fuel convention)
 
 ```
 src/
-├── assets/
+├── public/                        (Angular 17+ public assets — served at root)
 │   ├── Alerts-List.json
-│   └── Alerts-Type.json
-├── index.html                 (Oswald + Inter fonts)
-├── styles.scss                (design tokens as CSS variables, Tailwind theme)
+│   ├── Alerts-Type.json
+│   ├── header-vector.png
+│   └── icons/                     (chevron-left, chevron-right, calendar, clock, ...)
+├── styles.scss                    (design tokens, base, shared classes)
+├── tailwind.css                   (Tailwind theme + custom breakpoints)
 └── app/
-    ├── app.ts / .html / .scss / .spec.ts
-    ├── app.config.ts          (router, HttpClient, root Store/Effects, devtools)
-    ├── app.routes.ts          (redirect / → /alerts, lazy alerts feature, catch-all)
-    └── features/alerts/
-        ├── alert.service.ts   (HttpClient direct, shareReplay-cached)
-        ├── alerts.routes.ts   (provideState + provideEffects at the route boundary)
-        ├── models/
-        │   ├── alert.model.ts (domain + raw API types + FilterValue)
-        │   └── alert.mapper.ts
+    ├── app.component.{ts,html}
+    ├── app.config.ts              (router, HttpClient, root store, effects, devtools)
+    ├── app.routes.ts              (/ → /alerts redirect, lazy feature, catch-all)
+    ├── material.providers.ts      (SVG icon registry)
+    ├── features/alerts/
+    │   ├── alerts.routes.ts       (lazy feature — provideState + provideEffects here)
+    │   ├── core/                  (NgRx + service + model + mapper co-located)
+    │   │   ├── alerts.action.ts
+    │   │   ├── alerts.effects.ts
+    │   │   ├── alerts.mapper.ts
+    │   │   ├── alerts.model.ts
+    │   │   ├── alerts.reducer.ts
+    │   │   ├── alerts.selectors.ts
+    │   │   └── alerts.service.ts
+    │   ├── alerts-list-screen/
+    │   ├── alert-details-screen/
+    │   ├── not-found-screen/
+    │   └── components/
+    │       ├── alert-card/
+    │       ├── alert-filter-bar/
+    │       ├── alert-list/
+    │       ├── alert-pagination/
+    │       └── list-states/       (empty-state, error-state)
+    └── shared/
+        ├── components/
+        │   ├── global-loader/     (fullscreen spinner overlay)
+        │   ├── layout-wrapper/    (header + router-outlet + loader)
+        │   └── page-header/
+        ├── constants/
+        │   └── urls.constants.ts  (v1URL — { url, method } per endpoint)
+        ├── core/                  (global NgRx slice for loader)
+        │   ├── shared.actions.ts  (StartLoading, StopLoading, ClearLoading)
+        │   ├── shared.reducer.ts  (loading: number[] — stack pattern)
+        │   └── shared.selectors.ts
         ├── pipes/
-        │   ├── strip-html.pipe.ts
         │   ├── date-range.pipe.ts
-        │   └── safe-html.pipe.ts
-        ├── store/
-        │   ├── alerts.actions.ts
-        │   ├── alerts.reducer.ts
-        │   ├── alerts.selectors.ts
-        │   └── alerts.effects.ts
-        └── pages/
-            ├── alerts-list-page/
-            │   ├── alerts-list-page.component.{ts,html,scss}
-            │   └── components/{alert-card, alert-filter-bar, alert-pagination, list-states}/
-            ├── alert-details-page/
-            └── not-found-page/
+        │   ├── safe-html.pipe.ts
+        │   └── strip-html.pipe.ts
+        └── services/
+            └── common.service.ts  (callAPI wrapper + startLoading/stopLoading)
 ```
 
-## Testing
+### NgRx flow
 
-Vitest runs via `@angular/build:unit-test` (no Karma). `npm test` runs all specs once.
+```
+Component  ──dispatch──▶  Action  ──▶  Effect  ──▶  Service (callAPI)
+   ▲                                     │              │
+   │                                     ▼              ▼
+   └───selectSignal───  Selector ◀── Reducer ◀── Success/Failure Action
+```
 
-35 specs across 9 files cover:
+- **Action** — `const NAME = "[alerts] fetch ..."; export const Name = createAction(NAME, props<...>())`
+- **Effect** — `mergeMap` + `startLoading()` `tap` on entry + `stopLoading()` `tap` after both success & failure; sorts alerts DESC by `effectiveDate`
+- **Service** — calls `commonService.callAPI(method, url)` with URL config from `v1URL` constants
+- **Reducer** — split slices (`alertsList`, `alertDetails`, `alertTypes`, `filter`, `page`)
+- **Global loader** — separate `shared` slice with a `loading: number[]` stack; overlay shown while length > 0
 
-* **Mapper** — key renames, null expiration, empty routes
-* **Pipes** — `StripHtmlPipe` (tags, entities, truncation, null-safety), `DateRangePipe` (single/range/Ongoing)
-* **Reducer** — status transitions, `setFilter` resets page, `setPage`
-* **Selectors** — `selectFilterOptions` prepends *All*; `selectFilteredAlerts`, `selectPagedAlerts` (page size 5 across 7 items = 2 pages), `selectTotalPages`, `selectResultCount`
-* **Service** — `HttpTestingController`, request URLs, `getAlertById` cache-hit (no second HTTP request)
-* **Components** — `AlertCard` renders title/routes/badge, emits on click, shows *System-wide* when routes empty; `AlertPagination` boundary disable states and page-change emission
+### URL as source of truth
 
-## Accessibility
+Filter and page are synced to query params: `/alerts?type=<id|all>&page=<n>`. The list screen reads them via `toSignal(queryParamMap)`, dispatches `SetFilter` / `SetPage`, and every interaction navigates to update the URL. Refresh, deep-link, and browser-back all work.
 
-* Semantic landmarks (`header` / `main` / `nav`), one `<h1>` per page.
-* Filter tabs: buttons with `aria-pressed`, arrow-key movement.
-* Cards are `<button>`s — Enter/Space activate naturally, visible focus ring (via global `:focus-visible`).
-* Details page moves focus to `<h2>` on load.
-* Live region announces result count / current page on filter/pagination change.
-* Respects `prefers-reduced-motion`.
-* Touch targets ≥ 44 px.
+### Lazy loading
 
-## Responsive
+Root `app.routes.ts` lazy-loads `/alerts` via `loadChildren`. The feature route registers its own NgRx slice with `provideState(...)` + `provideEffects(...)` — so state and effects load only when the user enters the feature.
 
-Mobile-first via Tailwind + media queries.
+### Details `:id` binding
 
-* **Mobile (<640):** single-column cards, filter pills wrap, reduced header padding.
-* **Tablet (640–1024):** wider column, comfortable spacing.
-* **Desktop (>1024):** centered `max-w-[1040px]` container, Figma alignment.
+`withComponentInputBinding()` is configured in `app.config.ts`, so the `:id` route param binds directly to `input.required<number, unknown>({ transform: numberAttribute })` on the details component. No `paramMap.subscribe` needed.
 
-## What I'd do with more time
+### Styling system
 
-* Real API + server-side pagination endpoint (drop `shareReplay` cache for that).
-* i18n (currently English-only, dates hard-coded to en-US format).
-* Playwright e2e (list → click card → details → back).
-* Route resolver for details so the page can render synchronously without a "loading" flash when navigated from the list.
-* Dark-mode tokens.
+- **Design tokens** — CSS custom properties in `styles.scss` (`--color-brand`, `--color-accent`, `--radius`, `--shadow`, ...).
+- **Tokens available to Tailwind** — mirrored in `tailwind.css` under `@theme`.
+- **Split** — Tailwind for layout / spacing / responsive; SCSS for typography / colors / hover / transitions. All spacing values use `[X.Xrem]` arbitrary utilities (e.g. `p-[1.6rem]`) — no `gap-4` / `p-8` short-form.
+- **Breakpoints** (mirror tummy-fuel):
+
+  | Prefix | Range           |
+  |--------|-----------------|
+  | `xs:`  | max 599.98 px   |
+  | `sm:`  | ≥ 600 px        |
+  | `md:`  | ≥ 960 px        |
+  | `lg:`  | ≥ 1280 px       |
+  | `xl:`  | ≥ 1920 px       |
+
+  Figma values live at `lg:` (desktop). Everything scales down for `md` / `sm` / mobile.
+
+---
+
+## Assumptions
+
+1. **Static JSON data source.** No real backend — data is served from `public/Alerts-List.json` and `public/Alerts-Type.json`. The `CommonService.callAPI` wrapper still uses `HttpClient` internally so swapping to a real API is a URL change only.
+2. **Filter is by `alertTypeId`.** Matches the ids in `Alerts-Type.json`. Figma showed type-labeled filter pills; we drove the labels from the types file.
+3. **Sort order.** Alerts are sorted DESCENDING by `effectiveDate` inside the effect (newest first). Rationale: riders care about current/recent alerts first.
+4. **Pagination is client-side.** Five per page. The `totalPages` / `hasNextPage` fields in the JSON are ignored — page count is computed from the actual list length so it scales with the dataset.
+5. **"Ongoing" alerts** (no `expirationDate`) render as `N/A` in the meta row.
+6. **Descriptions may contain rich HTML.** Rendered with `SafeHtmlPipe` + `DomSanitizer.bypassSecurityTrustHtml`. Sub-section `<h2>` headings inside the description get styled to Geist / 600 / 20px / 140% line-height, with 32 px gap between sub-sections.
+7. **Alert type colors** ship in the data (`alertTypeColor` / `alertTypeTextColor`) and drive the list card's type pill only. The details page badge uses static brand-on-white styling so the two treatments are visually distinct.
+
+---
+
+## Enhancements beyond the requirements
+
+- **Lazy-loaded feature module** — routes + state + effects all deferred until `/alerts` is entered.
+- **Global loading indicator** — stack-based (`number[]`), dispatched from every effect via `commonService.startLoading()` / `stopLoading()`. Multiple concurrent requests are handled correctly.
+- **URL-driven state** — filter + page live in query params; refresh / deep-link / browser-back all preserve state.
+- **Details focus management** — page moves focus to the `<h2>` title after data loads, with `tabindex="-1"` and visible focus outline.
+- **Windowed filter bar** — up to 5 pills visible at once (4 at md, 3 at sm, 2 on mobile), with prev/next chevrons that appear on hover (`:focus-within` for keyboard).
+- **Empty & error states** — dedicated components; empty state has "Show all alerts" recovery action.
+- **Keyboard navigation** — arrow keys move focus between filter tabs (Home/End too); Enter/Space activate all `role="button"` elements.
+- **Accessibility** — `aria-label`, `aria-pressed`, `aria-disabled`, `aria-live` polite region for the result count, `aria-hidden` on decorative icons, `.sr-only` utility.
+- **Responsive** — five-tier breakpoint system, mobile-first, tested `xs` → `xl`.
+- **Design tokens** — colors, radii, shadows, spacing all in CSS custom properties so a rebrand is a token change.
+- **SVG icon registry** — six icons registered once via `MatIconRegistry` + `DomSanitizer`; components consume via `<mat-icon svgIcon="chevron-right"/>`.
+
+---
+
+## Deviations from the starter template
+
+- **`app-` selector prefix, no `ba-`.** All Blue-Agate starter shared components (icon, dialog, buttons, guards, interceptors, auth) were removed — only build config, Tailwind wiring, and environments were kept.
+- **Public folder instead of `src/assets/`.** Uses Angular 17+ convention — files in `public/` are served at the root URL.
+- **No test files.** Specs were removed per requirement — the codebase ships production code only.
+- **No inline comments.** All comments stripped from `.ts` / `.html` / `.scss` except `tailwind.css` (which has meaningful `@theme` breakpoint labels).
+
+---
+
+## What I'd add with more time
+
+- Real backend integration + server-side pagination
+- Playwright end-to-end tests (list → card click → details → back)
+- Route resolver for details so navigation is synchronous
+- i18n (currently en-US only)
+- Dark-mode token set
